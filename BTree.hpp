@@ -387,11 +387,11 @@ namespace sjtu {
             char ch[kuai+2];
             file.seekg(0);
             file.read(ch,kuai);
-           /* int *q=(int *)ch;
+            int *q=(int *)ch;
             int w=*q+1;
             file.seekp(0);
             file.write((char *)&w,sizeof(int));
-            file.flush();*/
+            file.flush();
             int *tmp;
             int dizhi;
             tmp=(int *)(ch+sizeof(int));
@@ -413,8 +413,13 @@ namespace sjtu {
                     if (key < tmp.min)tmp.min = key;
                     charu(tmp.oneSonPoint, key, value);
                 }
-                else
+                else {
                     charu(tmp.num[i-1].second,key,value);
+                    elem w;
+                    Read(w,tmp.num[i-1].second);
+                    tmp.num[i-1].first=w.min;
+                }
+                Write(tmp,tmp.here);
                 Read(tmp,n);
                 if(tmp.start>=508)erfen(tmp);
             }
@@ -461,11 +466,14 @@ namespace sjtu {
                 }
             }
             else{
-                if(tmp.start==-1)tmp.min=key;
+                //if(tmp.start==-1)tmp.min=key;
                 int i=0;
                 for(;i<tmp.start;i++){
                     if(key>=tmp.num[i].first)continue;
                     else break;
+                }
+                if(i==0){
+                    tmp.min=key;
                 }
                 for(int j=tmp.start++;j>i;j--){
                     tmp.num[j]=tmp.num[j-1];
