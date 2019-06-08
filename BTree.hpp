@@ -15,6 +15,7 @@ namespace sjtu {
     class BTree {
     public:
         mutable std::fstream file;
+
         struct elem{
             int flagAndParent;
             int here;
