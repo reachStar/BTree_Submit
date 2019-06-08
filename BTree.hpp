@@ -15,7 +15,6 @@ namespace sjtu {
     class BTree {
     public:
         mutable std::fstream file;
-
         struct elem{
             int flagAndParent;
             int here;
@@ -388,10 +387,11 @@ namespace sjtu {
             char ch[kuai+2];
             file.seekg(0);
             file.read(ch,kuai);
-            //int *q=(int *)ch;
-            //int w=*q+1;
-            //file.seekp(0);
-            //file.write((char *)&w,sizeof(int));
+           /* int *q=(int *)ch;
+            int w=*q+1;
+            file.seekp(0);
+            file.write((char *)&w,sizeof(int));
+            file.flush();*/
             int *tmp;
             int dizhi;
             tmp=(int *)(ch+sizeof(int));
@@ -428,7 +428,7 @@ namespace sjtu {
                     int dizhi;
                     tmp2=(int *)(ch+sizeof(int)*3);
                     dizhi=*tmp2;
-                    tmp.start=1;
+                    tmp.start=0;
                     elem tmp3;
                     tmp3.start=1;
                     tmp3.flagAndParent=-1*tmp.here;
@@ -441,6 +441,7 @@ namespace sjtu {
                     dizhi+=kuai;
                     file.seekp(sizeof(int)*3);
                     file.write((char *)&dizhi,sizeof(int));
+                    file.flush();
                     return ;
                 }
                 else{
@@ -488,6 +489,7 @@ namespace sjtu {
                 dizhi+=kuai;
                 file.seekp(sizeof(int)*3);
                 file.write((char *)&dizhi,sizeof(int));
+                file.flush();
                 t2.flagAndParent=tmp.flagAndParent;
                 t2.start=254;
                 for(int i=0;i<254;i++){
@@ -535,8 +537,9 @@ namespace sjtu {
                 dizhi+=kuai;
                 file.seekp(sizeof(int)*3);
                 file.write((char *)&dizhi,sizeof(int));
+                file.flush();
                 t2.flagAndParent=tmp.flagAndParent;
-                t2.start=254;
+                t2.start=253;
                 int i;
                 for(i=0;i<253;i++){
                     t2.num[i]=tmp.num[i+255];
@@ -549,7 +552,7 @@ namespace sjtu {
                 tmp.start=254;
                 Write(tmp,tmp.here);
                 elem t3;
-                Read(t3,tmp.flagAndParent*(-1));
+                Read(t3,tmp.flagAndParent);
                 int j=0;
                 if(t3.oneSonPoint==tmp.here){
                     for(int i=t3.start;i>0;i--){
@@ -586,14 +589,16 @@ namespace sjtu {
                 t3.here=dizhi;
                 dizhi+=kuai;
                 t2.flagAndParent=t3.here;
-                file.seekp(sizeof(int)*2);
+                file.seekp(sizeof(int));
                 file.write((char*)&t3.here,sizeof(int));
+                file.flush();
                 t2.here=dizhi;
                 dizhi+=kuai;
                 file.seekp(sizeof(int)*3);
                 file.write((char *)&dizhi,sizeof(int));
+                file.flush();
                 t2.flagAndParent=tmp.flagAndParent;
-                t2.start=254;
+                t2.start=253;
                 int i;
                 for(i=0;i<253;i++){
                     t2.num[i]=tmp.num[i+255];
@@ -608,6 +613,7 @@ namespace sjtu {
                 t3.flagAndParent=0;
                 t3.oneSonPoint=tmp.here;
                 t3.start=1;
+                t3.min=tmp.min;
                 t3.num[0]=std::make_pair(t2.min,t2.here);
                 Write(t3,t3.here);
             }
@@ -739,6 +745,7 @@ namespace sjtu {
                 }
                 else break;
             }
+
             for(int i=0;i<tmp.start;i++){
                 if(tmp.num[i].first==key)return tmp.num[i].second;
             }
@@ -760,8 +767,6 @@ namespace sjtu {
         iterator find(const Key& key) {}
         const_iterator find(const Key& key) const {}
         int erfenchazhao(elem tmp,int start,int stop){
-
-
         }
     };
 }  // namespace sjtu
