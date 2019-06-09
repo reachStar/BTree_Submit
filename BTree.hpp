@@ -227,7 +227,6 @@ namespace sjtu {
         // Default Constructor and Copy Constructor
         BTree() {
             file.open("file",std::ios::in|std::ios::out|std::ios::binary);
-            while(!file){file.open("file",std::ios::in|std::ios::out|std::ios::binary);}
             int n=0;
             file.seekp(0);
             file.write((char *)&n,sizeof(int));
@@ -249,8 +248,7 @@ namespace sjtu {
             // Todo Default
         }
         BTree(const BTree& other) {
-            file.open("file11",std::ios::in|std::ios::out|std::ios::binary);
-            while(!file){file.open("file11",std::ios::in|std::ios::out|std::ios::binary);}
+            file.open("file1",std::ios::in|std::ios::out|std::ios::binary);
             char tmp[kuai+2];
             other.file.seekg(0);
             other.file.read(tmp,kuai);
@@ -398,13 +396,11 @@ namespace sjtu {
             int dizhi;
             tmp=(int *)(ch+sizeof(int));
             charu(*tmp,key,value);
-
         }
         void charu(int n,Key key,Value value){
             elem tmp;
             Read(tmp,n);
             int min;
-            //std::cout<<tmp.flagAndParent<<' '<<tmp.here<<' '<<tmp.start<<std::endl;
             if(tmp.flagAndParent>0){
                 int i=0;
                 for(;i<tmp.start;i++){
@@ -412,16 +408,18 @@ namespace sjtu {
                     else break;
                 }
                 if(i==0) {
-                    if (key < tmp.min)tmp.min = key;
+                    if (key < tmp.min){tmp.min = key; Write(tmp,tmp.here);}
                     charu(tmp.oneSonPoint, key, value);
                 }
                 else {
-                    charu(tmp.num[i-1].second,key,value);
                     elem w;
                     Read(w,tmp.num[i-1].second);
-                    tmp.num[i-1].first=w.min;
+                    if(w.min>key) {
+                        tmp.num[i - 1].first = key;
+                        Write(tmp,tmp.here);
+                    }
+                    charu(tmp.num[i-1].second,key,value);
                 }
-                Write(tmp,tmp.here);
                 Read(tmp,n);
                 if(tmp.start>=508)erfen(tmp);
             }
@@ -458,11 +456,18 @@ namespace sjtu {
                         else break;
                     }
                     if(i==0) {
-                        if (key < tmp.min)tmp.min = key;
+                        if (key < tmp.min){tmp.min = key;Write(tmp,tmp.here);}
                         charu(tmp.oneSonPoint, key, value);
                     }
-                    else
-                        charu(tmp.num[i-1].second,key,value);
+                    else {
+                        elem w;
+                        Read(w,tmp.num[i-1].second);
+                        if(w.min>key) {
+                            tmp.num[i - 1].first = key;
+                            Write(tmp,tmp.here);
+                        }
+                        charu(tmp.num[i - 1].second, key, value);
+                    }
                     Read(tmp,n);
                     if(tmp.start>=508)erfen(tmp);
                 }
@@ -477,9 +482,10 @@ namespace sjtu {
                 if(i==0){
                     tmp.min=key;
                 }
-                for(int j=tmp.start++;j>i;j--){
+                for(int j=tmp.start;j>i;j--){
                     tmp.num[j]=tmp.num[j-1];
                 }
+                tmp.start++;
                 tmp.num[i]=std::make_pair(key,value);
                 Write(tmp,n);
                 if(tmp.start>=508)erfen(tmp);
@@ -554,7 +560,7 @@ namespace sjtu {
                 for(i=0;i<253;i++){
                     t2.num[i]=tmp.num[i+255];
                 }
-                t2.oneSonPoint=tmp.num[i+254].second;
+                t2.oneSonPoint=tmp.num[254].second;
                 elem qaq;
                 Read(qaq,t2.oneSonPoint);
                 t2.min=qaq.min;
@@ -600,12 +606,12 @@ namespace sjtu {
                 dizhi+=kuai;
                 t2.flagAndParent=t3.here;
                 file.seekp(sizeof(int));
-                file.write((char*)&t3.here,sizeof(int));
+                file.write((char*)&dizhi,sizeof(int));
                 file.flush();
                 t2.here=dizhi;
                 dizhi+=kuai;
                 file.seekp(sizeof(int)*3);
-                file.write((char *)&dizhi,sizeof(int));
+                file.write((char *)&dizhi,sizeof(int)*3);
                 file.flush();
                 t2.flagAndParent=tmp.flagAndParent;
                 t2.start=253;
@@ -613,7 +619,7 @@ namespace sjtu {
                 for(i=0;i<253;i++){
                     t2.num[i]=tmp.num[i+255];
                 }
-                t2.oneSonPoint=tmp.num[i+254].second;
+                t2.oneSonPoint=tmp.num[254].second;
                 elem qaq;
                 Read(qaq,t2.oneSonPoint);
                 t2.min=qaq.min;
@@ -747,15 +753,13 @@ namespace sjtu {
                     int i=0;
                     for(;i<tmp.start;i++){
                         if(key>=tmp.num[i].first)continue;
-                        else break; ;
+                        else break;
                     }
                     if(i==0)dizhi=tmp.oneSonPoint;
                     else dizhi=tmp.num[i-1].second;
-                    Read(tmp,dizhi);
                 }
                 else break;
             }
-
             for(int i=0;i<tmp.start;i++){
                 if(tmp.num[i].first==key)return tmp.num[i].second;
             }
