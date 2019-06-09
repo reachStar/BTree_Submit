@@ -256,7 +256,7 @@ namespace sjtu {
             // Todo Default
         }
         BTree(const BTree& other) {
-            std::ofstream a("file11",std::ios::out);
+            std::ofstream a("file1",std::ios::out);
             a.close();
             file.open("file1",std::ios::in|std::ios::out|std::ios::binary);
             char tmp[kuai+2];
