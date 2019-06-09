@@ -226,7 +226,7 @@ namespace sjtu {
         };
         // Default Constructor and Copy Constructor
         BTree() {
-            file.open("f:\\file10.txt",std::ios::in|std::ios::out|std::ios::binary);
+            file.open("file10",std::ios::in|std::ios::out|std::ios::binary);
             char ch[kuai+2];
             file.seekg(0);
             file.read(ch,kuai);
