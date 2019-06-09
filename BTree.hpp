@@ -233,6 +233,7 @@ namespace sjtu {
             file.seekg(0);
             file.read(ch,kuai);
             int *e=(int *)ch;
+
             if(*e==0) {
                 int n = 0;
                 file.seekp(0);
