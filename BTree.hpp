@@ -226,7 +226,7 @@ namespace sjtu {
         };
         // Default Constructor and Copy Constructor
         BTree() {
-            std::ofstream a("file10",std::ios::out);
+            std::ofstream a("file10",std::ios::app);
             a.close();
             file.open("file10",std::ios::in|std::ios::out|std::ios::binary);
             char ch[kuai+2];
@@ -256,7 +256,7 @@ namespace sjtu {
             // Todo Default
         }
         BTree(const BTree& other) {
-            std::ofstream a("file1",std::ios::out);
+            std::ofstream a("file1",std::ios::app);
             a.close();
             file.open("file1",std::ios::in|std::ios::out|std::ios::binary);
             char tmp[kuai+2];
@@ -298,8 +298,8 @@ namespace sjtu {
         // Insert: Insert certain Key-Value into the database
         // Return a pair, the first of the pair is the iterator point to the new
         // element, the second of the pair is Success if it is successfully inserted
-        pair<iterator, OperationResult> insert(const Key& key, const Value& value) {
-        //void insert(const Key& key, const Value& value) {
+        //pair<iterator, OperationResult> insert(const Key& key, const Value& value) {
+        void insert(const Key& key, const Value& value) {
             /*char ch[kuai+2];
             file.seekg(0);
             file.read(ch,kuai);
@@ -406,7 +406,7 @@ namespace sjtu {
             int dizhi;
             tmp=(int *)(ch+sizeof(int));
             charu(*tmp,key,value);
-            return pair<iterator, OperationResult>();
+            //xreturn pair<iterator, OperationResult>();
         }
         void charu(int n,Key key,Value value){
             elem tmp;
