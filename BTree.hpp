@@ -118,7 +118,7 @@ namespace sjtu {
                 place=other.place;
                 // TODO Copy Constructor
             }
-            iterator(std::fstream w):fileIte(w){
+            iterator(std::fstream w){
 
             }
             // Return a new iterator which points to the n-next elements
@@ -209,7 +209,7 @@ namespace sjtu {
             const_iterator() {
                 // TODO
             }
-            const_iterator(std::fstream w):fileIte(w){
+            const_iterator(std::fstream w){
 
             }
             const_iterator(const const_iterator& other):fileIte(other.fileIte) {
@@ -298,8 +298,8 @@ namespace sjtu {
         // Insert: Insert certain Key-Value into the database
         // Return a pair, the first of the pair is the iterator point to the new
         // element, the second of the pair is Success if it is successfully inserted
-        //pair<iterator, OperationResult> insert(const Key& key, const Value& value) {
-        void insert(const Key& key, const Value& value) {
+        pair<iterator, OperationResult> insert(const Key& key, const Value& value) {
+        //void insert(const Key& key, const Value& value) {
             /*char ch[kuai+2];
             file.seekg(0);
             file.read(ch,kuai);
@@ -406,6 +406,7 @@ namespace sjtu {
             int dizhi;
             tmp=(int *)(ch+sizeof(int));
             charu(*tmp,key,value);
+            return pair<iterator, OperationResult>();
         }
         void charu(int n,Key key,Value value){
             elem tmp;
