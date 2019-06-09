@@ -27,12 +27,12 @@ namespace sjtu {
         };
     public:
         void Write(elem &tmp,int place){
-            file.seekp(place);
+            file.seekp(place,std::ios::beg);
             file.write((char*)&tmp,kuai);
             file.flush();
         }
         bool Read(elem &tmp,int place)const{
-            file.seekg(place);
+            file.seekg(place,std::ios::beg);
             int *q;
             char p[kuai+2];
             file.read(p,kuai);
@@ -71,12 +71,12 @@ namespace sjtu {
             // Your private members go here
         public:
             void Write(elem &tmp,int plac){
-                fileIte.seekp(plac);
+                fileIte.seekp(plac,std::ios::beg);
                 fileIte.write((char*)&tmp,kuai);
                 fileIte.flush();
             }
             bool Read(elem &tmp,int plac)/*const*/ {
-                fileIte.seekg(plac);
+                fileIte.seekg(plac,std::ios::beg);
                 int *q;
                 char p[kuai + 2];
                 fileIte.read(p, kuai);
@@ -226,34 +226,35 @@ namespace sjtu {
         };
         // Default Constructor and Copy Constructor
         BTree() {
-            std::ofstream a("file10",std::ios::app);
-            a.close();
-            file.open("file10",std::ios::in|std::ios::out|std::ios::binary);
-            char ch[kuai+2];
-            file.seekg(0);
-            file.read(ch,kuai);
-            int *e=(int *)ch;
 
-            if(*e==0) {
-                int n = 0;
-                file.seekp(0);
-                file.write((char *) &n, sizeof(int));
-                file.flush();
-                n = kuai;
-                file.write((char *) &n, sizeof(int));
-                file.flush();
-                n = kuai * 2;
-                file.write((char *) &n, sizeof(int));
-                file.flush();
-                n = kuai * 2;
-                file.write((char *) &n, sizeof(int));
-                file.flush();
-                elem tmp;
-                tmp.start = -1;
-                tmp.flagAndParent = 0;
-                tmp.here = kuai;
-                Write(tmp, kuai);
+            bool p=1;
+            std::ifstream a("file9");
+            if(!a){p=0;}
+            if(p)a.close();
+            if(!p){
+                std::ofstream b("file9");
+                b.close();
             }
+            file.open("file9",std::ios::in|std::ios::out|std::ios::binary);
+            if(p)return;
+            int n=0;
+            file.seekp(0);
+            file.write((char *)&n,sizeof(int));
+            file.flush();
+            n=kuai;
+            file.write((char *)&n,sizeof(int));
+            file.flush();
+            n=kuai*2;
+            file.write((char *)&n,sizeof(int));
+            file.flush();
+            n=kuai*2;
+            file.write((char *)&n,sizeof(int));
+            file.flush();
+            elem tmp;
+            tmp.start=-1;
+            tmp.flagAndParent=0;
+            tmp.here=kuai;
+            Write(tmp,kuai);
             // Todo Default
         }
         BTree(const BTree& other) {
@@ -261,11 +262,11 @@ namespace sjtu {
             a.close();
             file.open("file1",std::ios::in|std::ios::out|std::ios::binary);
             char tmp[kuai+2];
-            other.file.seekg(0);
+            other.file.seekg(0,std::ios::beg);
             other.file.read(tmp,kuai);
             int *q;
             q=(int *)(tmp+sizeof(int)*3);
-            file.seekp(0);
+            file.seekp(0,std::ios::beg);
             file.write(tmp,kuai);
             file.flush();
             for(int i=kuai;i<=*q;i+=kuai){
@@ -278,11 +279,11 @@ namespace sjtu {
         BTree& operator=(const BTree& other) {
             if(other==*this)return *this;
             char tmp[kuai+2];
-            other.file.seekg(0);
+            other.file.seekg(0,std::ios::beg);
             other.file.read(tmp,kuai);
             int *q;
             q=(int *)(tmp+sizeof(int)*3);
-            file.seekp(0);
+            file.seekp(0,std::ios::beg);
             file.write(tmp,kuai);
             file.flush();
             for(int i=kuai;i<=*q;i+=kuai){
@@ -396,11 +397,11 @@ namespace sjtu {
                 }
             }*/
             char ch[kuai+2];
-            file.seekg(0);
+            file.seekg(0,std::ios::beg);
             file.read(ch,kuai);
             int *q=(int *)ch;
             int w=*q+1;
-            file.seekp(0);
+            file.seekp(0,std::ios::beg);
             file.write((char *)&w,sizeof(int));
             file.flush();
             int *tmp;
@@ -439,7 +440,7 @@ namespace sjtu {
                 if(tmp.start==-1){
                     tmp.min=key;
                     char ch[kuai+2];
-                    file.seekg(0);
+                    file.seekg(0,std::ios::beg);
                     file.read(ch,kuai);
                     int *tmp2;
                     int dizhi;
@@ -456,7 +457,7 @@ namespace sjtu {
                     Write(tmp3,tmp3.here);
                     Write(tmp,tmp.here);
                     dizhi+=kuai;
-                    file.seekp(sizeof(int)*3);
+                    file.seekp(sizeof(int)*3,std::ios::beg);
                     file.write((char *)&dizhi,sizeof(int));
                     file.flush();
                     return ;
@@ -507,7 +508,7 @@ namespace sjtu {
             if(tmp.flagAndParent<0){
                 elem t2;
                 char ch[kuai+2];
-                file.seekg(0);
+                file.seekg(0,std::ios::beg);
                 file.read(ch,kuai);
                 int *tmp2;
                 int dizhi;
@@ -515,7 +516,7 @@ namespace sjtu {
                 dizhi=*tmp2;
                 t2.here=dizhi;
                 dizhi+=kuai;
-                file.seekp(sizeof(int)*3);
+                file.seekp(sizeof(int)*3,std::ios::beg);
                 file.write((char *)&dizhi,sizeof(int));
                 file.flush();
                 t2.flagAndParent=tmp.flagAndParent;
@@ -555,7 +556,7 @@ namespace sjtu {
             else if(tmp.flagAndParent>0){
                 elem t2;
                 char ch[kuai+2];
-                file.seekg(0);
+                file.seekg(0,std::ios::beg);
                 file.read(ch,kuai);
                 int *tmp2;
                 int dizhi;
@@ -563,7 +564,7 @@ namespace sjtu {
                 dizhi=*tmp2;
                 t2.here=dizhi;
                 dizhi+=kuai;
-                file.seekp(sizeof(int)*3);
+                file.seekp(sizeof(int)*3,std::ios::beg);
                 file.write((char *)&dizhi,sizeof(int));
                 file.flush();
                 t2.flagAndParent=tmp.flagAndParent;
@@ -607,7 +608,7 @@ namespace sjtu {
             else {
                 elem t2;
                 char ch[kuai+2];
-                file.seekg(0);
+                file.seekg(0,std::ios::beg);
                 file.read(ch,kuai);
                 int *tmp2;
                 int dizhi;
@@ -617,12 +618,12 @@ namespace sjtu {
                 t3.here=dizhi;
                 dizhi+=kuai;
                 t2.flagAndParent=t3.here;
-                file.seekp(sizeof(int));
+                file.seekp(sizeof(int),std::ios::beg);
                 file.write((char*)&dizhi,sizeof(int));
                 file.flush();
                 t2.here=dizhi;
                 dizhi+=kuai;
-                file.seekp(sizeof(int)*3);
+                file.seekp(sizeof(int)*3,std::ios::beg);
                 file.write((char *)&dizhi,sizeof(int)*3);
                 file.flush();
                 t2.flagAndParent=tmp.flagAndParent;
@@ -702,7 +703,7 @@ namespace sjtu {
         // Check whether this BTree is empty
         bool empty() const {
             char tmp[kuai+2];
-            file.seekg(0);
+            file.seekg(0,std::ios::beg);
             file.read(tmp,kuai);
             int *q;
             q=(int *)tmp;
@@ -712,7 +713,7 @@ namespace sjtu {
         // Return the number of <K,V> pairs
         size_t size() const {
             char tmp[kuai+2];
-            file.seekg(0);
+            file.seekg(0,std::ios::beg);
             file.read(tmp,kuai);
             int *q;
             q=(int *)tmp;
@@ -721,7 +722,7 @@ namespace sjtu {
         // Clear the BTree
         void clear() {
             int n=0;
-            file.seekp(0);
+            file.seekp(0,std::ios::beg);
             file.write((char *)&n,sizeof(int));
             file.flush();
             n=kuai;
@@ -753,7 +754,7 @@ namespace sjtu {
             if(tmp.num[w].first!=key)return 0;
             else return tmp.num[w].second;*/
             char ch[kuai+2];
-            file.seekg(0);
+            file.seekg(0,std::ios::beg);
             file.read(ch,kuai);
             int *point=(int*)(ch+sizeof(int));
             int dizhi=*point;
