@@ -226,25 +226,31 @@ namespace sjtu {
         };
         // Default Constructor and Copy Constructor
         BTree() {
-            file.open("file",std::ios::in|std::ios::out|std::ios::binary);
-            int n=0;
-            file.seekp(0);
-            file.write((char *)&n,sizeof(int));
-            file.flush();
-            n=kuai;
-            file.write((char *)&n,sizeof(int));
-            file.flush();
-            n=kuai*2;
-            file.write((char *)&n,sizeof(int));
-            file.flush();
-            n=kuai*2;
-            file.write((char *)&n,sizeof(int));
-            file.flush();
-            elem tmp;
-            tmp.start=-1;
-            tmp.flagAndParent=0;
-            tmp.here=kuai;
-            Write(tmp,kuai);
+            file.open("f:\\file10.txt",std::ios::in|std::ios::out|std::ios::binary);
+            char ch[kuai+2];
+            file.seekg(0);
+            file.read(ch,kuai);
+            int *e=(int *)ch;
+            if(*e==0) {
+                int n = 0;
+                file.seekp(0);
+                file.write((char *) &n, sizeof(int));
+                file.flush();
+                n = kuai;
+                file.write((char *) &n, sizeof(int));
+                file.flush();
+                n = kuai * 2;
+                file.write((char *) &n, sizeof(int));
+                file.flush();
+                n = kuai * 2;
+                file.write((char *) &n, sizeof(int));
+                file.flush();
+                elem tmp;
+                tmp.start = -1;
+                tmp.flagAndParent = 0;
+                tmp.here = kuai;
+                Write(tmp, kuai);
+            }
             // Todo Default
         }
         BTree(const BTree& other) {
