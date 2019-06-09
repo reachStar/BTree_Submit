@@ -226,6 +226,8 @@ namespace sjtu {
         };
         // Default Constructor and Copy Constructor
         BTree() {
+            std::ofstream a("file10",std::ios::out);
+            a.close();
             file.open("file10",std::ios::in|std::ios::out|std::ios::binary);
             char ch[kuai+2];
             file.seekg(0);
@@ -254,6 +256,8 @@ namespace sjtu {
             // Todo Default
         }
         BTree(const BTree& other) {
+            std::ofstream a("file11",std::ios::out);
+            a.close();
             file.open("file1",std::ios::in|std::ios::out|std::ios::binary);
             char tmp[kuai+2];
             other.file.seekg(0);
