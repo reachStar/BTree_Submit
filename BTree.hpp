@@ -302,100 +302,6 @@ namespace sjtu {
         // element, the second of the pair is Success if it is successfully inserted
         //pair<iterator, OperationResult> insert(const Key& key, const Value& value) {
         void insert(const Key& key, const Value& value) {
-            /*char ch[kuai+2];
-            file.seekg(0);
-            file.read(ch,kuai);
-            int *q=(int *)(ch+sizeof(int));
-            int dizhi=*q;
-            elem tmp;
-            int m;
-            while(1){
-                Read(tmp,dizhi);
-                if(tmp.flagAndParent<0)break;
-                if(tmp.start==-1){m=-1;break;}
-                if(tmp.flagAndParent>=0) {
-                    if(tmp.start==0){
-                        dizhi=tmp.oneSonPoint;m=-1;continue;
-                    }
-                    for (int i = 0; i < tmp.start; i++) {
-                        if (key >= tmp.num[i].first)continue;
-                        else dizhi = tmp.num[i]
-                    }
-                    if(i==0){m=-1;dizhi=tmp.oneSonPoint;}
-                    else {m=i-1;dizhi=tmp.num[i-1].second;}
-                }
-            }
-            if(tmp.flagAndParent>=0){
-                tmp.start++;
-                q=(int *)(ch+sizeof(int)*3);
-                dizhi=*q;
-                tmp.oneSonPoint=dizhi;
-                elem w;
-                w.flagAndParent=-1*tmp.here;
-                w.star=1;
-                w.weizhi2=0;
-                w.here=dizhi;
-                w.num[0]=std::make_pair(key,value);
-                Write(tmp,tmp.here);
-                Write(w,w.here);
-                file.seekp(0);
-                q=(int *)ch;
-                dizhi=*q+1;
-                file.seekp(0);
-                file.write(&dizhi,sizeof(int));
-                file.flush();
-                return pair;
-            }
-            else {
-                int i=0;
-                for(;i<tmp.start;i++) {
-                    if(key>=tmp.num[i].first)continue;
-                    else break;
-                }
-
-                for(int j=tmp.start++;j>i;j--) {
-                    tmp.num[j]=tmp.num[j-1];
-                }
-                tmp.num[i]=std::make_pair(key,value);
-                q=(int *)ch;
-                dizhi=*q+1;
-                file.seekp(0);
-                file.write(&dizhi,sizeof(int));
-                file.flush();
-                if(tmp.start==508){
-                    std::pair ch2[255];
-                    for(int i=0;i<254;i++){
-                        ch2[i]=tmp.num[i+254];
-                    }
-                    tmp.start=254;
-                    Write(tmp,tmp.here);
-                    q=(int *)(ch+sizeof(int)*3);
-                    dizhi=*q;
-                    int moweizhi=dizhi+kuai;
-                    file.seekp(3*sizeof(int));
-                    file.write((char *)&moweizhi,sizeof(int));
-                    file.flush();
-                    elem z;
-                    z.here=duzhi;
-                    z.start=254;
-                    for(int i=0;i<254;i++){
-                        z.num[i]=ch2[i];
-                    }
-                    z.flagAndParent=tmp.flagAndParent;
-                    Write(z,z.here);
-                    int x=1000;
-                    tmp.flagAndParent*=-1;
-                    std::pair k(z.num[0].first,z.here);
-                    while(x>=508){
-                        Read(tmp,tmp.flagAndParent);
-                        for(int i=tmp.start++;i>m+1;i++){
-                            tmp.num[i]=tmp.num[i-1];
-                        }
-                        tmp.num[m+1]=k;
-                        x=tmp.flagAndParent;
-                    }
-                }
-            }*/
             char ch[kuai+2];
             file.seekg(0,std::ios::beg);
             file.read(ch,kuai);
@@ -408,7 +314,6 @@ namespace sjtu {
             int dizhi;
             tmp=(int *)(ch+sizeof(int));
             charu(*tmp,key,value);
-            //xreturn pair<iterator, OperationResult>();
         }
         void charu(int n,Key key,Value value){
             elem tmp;
@@ -651,8 +556,161 @@ namespace sjtu {
         // Return Success if it is successfully erased
         // Return Fail if the key doesn't exist in the database
         OperationResult erase(const Key& key) {
+            char ch[kuai+2];
+            file.seekg(0,std::ios::beg);
+            file.read(ch,kuai);
+            //int *q=(int *)ch;
+            //int w=*q+1;
+            //file.seekp(0,std::ios::beg);
+            //file.write((char *)&w,sizeof(int));
+            //file.flush();
+            int *tmp;
+            int dizhi;
+            tmp=(int *)(ch+sizeof(int));
+            if(shanchu(*tmp,key)){
+                //std::cout<<"haha"<<std::endl;
+                //char ch[kuai+2];
+                //file.seekg(0);
+                //file.read(ch,kuai);
+                int *w=(int *)ch;
+                int e=*w-1;
+                file.seekp(0);//std::cout<<file.tellp();
+                file.write((char *)&e,sizeof(int));
+                file.flush();
+                return OperationResult();
+            }
             // TODO erase function
-            return Fail;  // If you can't finish erase part, just remaining here.
+            else return Fail;  // If you can't finish erase part, just remaining here.
+        }
+        bool shanchu(int n,Key key){
+            elem tmp;
+            Read(tmp,n);
+            int min;
+            bool fanhui;
+            if(tmp.flagAndParent>0){
+                int i=0;
+                for(;i<tmp.start;i++){
+                    if(key>=tmp.num[i].first)continue;
+                    else break;
+                }
+                if(i==0) {
+                    fanhui=shanchu(tmp.oneSonPoint, key);
+                    if(tmp.start!=-1){
+                        elem w;
+                        Read(w,tmp.oneSonPoint);
+                        Read(tmp,tmp.here);
+                        tmp.min=w.min;
+                        Write(tmp,tmp.here);
+                    }
+                }
+                else {
+                    fanhui=shanchu(tmp.num[i-1].second,key);
+                    Read(tmp,tmp.here);
+                    if(tmp.start==i){
+                        elem w;
+                        Read(w,tmp.num[i-1].second);
+                        tmp.num[i-1].first=w.min;
+                        Write(tmp,tmp.here);
+                    }
+                }
+                Read(tmp,n);
+                if(tmp.start<0)shanchu(tmp.here);
+                return fanhui;
+            }
+            else if(tmp.flagAndParent==0){
+                if(tmp.start==-1){
+                    return 0;
+                }
+                else{
+                    int i=0;
+                    for(;i<tmp.start;i++){
+                        if(key>=tmp.num[i].first)continue;
+                        else break;
+                    }
+                    if(i==0) {
+                        fanhui=shanchu(tmp.oneSonPoint, key);
+                        if(tmp.start!=-1){
+                            elem w;
+                            Read(w,tmp.oneSonPoint);
+                            Read(tmp,tmp.here);
+                            tmp.min=w.min;
+                            Write(tmp,tmp.here);
+                        }
+                    }
+                    else {
+                        fanhui=shanchu(tmp.num[i-1].second,key);
+                        Read(tmp,tmp.here);
+                        if(tmp.start==i){
+                            elem w;
+                            Read(w,tmp.num[i-1].second);
+                            tmp.num[i-1].first=w.min;
+                            Write(tmp,tmp.here);
+                        }
+                    }
+                    Read(tmp,n);
+                    if(tmp.start<0)shanchu(tmp.here);
+                    return fanhui;
+                }
+            }
+            else{
+                //if(tmp.start==-1)tmp.min=key;
+                int i;
+                for(i=0;i<tmp.start;i++){
+                    if(tmp.num[i].first==key)break;
+                }
+                if(i==tmp.start)return 0;
+                for(int j=i;j<tmp.start-1;j++){
+                    tmp.num[j]=tmp.num[j+1];
+                }
+                tmp.start--;
+                if(tmp.start==0){
+                    shanchu(tmp.here);
+                    return 1;
+                }
+                tmp.min=tmp.num[0].first;
+                Write(tmp,tmp.here);
+                return 1;
+            }
+        }
+        void shanchu(int here){
+            elem tmp;
+            Read(tmp,here);
+            if(tmp.flagAndParent!=0){
+                elem father;
+                Read(father,tmp.flagAndParent*(-1));
+                if(father.oneSonPoint==here){
+                    if(father.start==0){
+                        father.start=-1;
+                        Write(father,father.here);
+                        return ;
+                    }
+                    else {
+                        father.oneSonPoint=father.num[0].second;
+                        for(int i=0;i<father.start-1;i++){
+                            father.num[i]=father.num[i+1];
+                        }
+                        elem w;
+                        Read(w,father.oneSonPoint);
+                        father.min=w.min;
+                        Write(father,father.here);
+                        return ;
+                    }
+                }
+                else {
+                    int i=0;
+                    for(;i<father.start;i++){
+                        if(father.num[i].second==here)break;
+                    }
+                    for(int j=i;j<father.start-1;j++){
+                        father.num[j]=father.num[j+1];
+                    }
+                    Write(father,father.here);
+                    return ;
+                }
+            }
+            else {
+                file.clear();
+            }
         }
         // Return a iterator to the beginning
         iterator begin() {
@@ -733,6 +791,11 @@ namespace sjtu {
             file.flush();
             file.write((char *)&n,sizeof(int));
             file.flush();
+            elem tmp;
+            tmp.start=-1;
+            tmp.flagAndParent=0;
+            tmp.here=kuai;
+            Write(tmp,kuai);
         }
         // Return the value refer to the Key(key)
         Value at(const Key& key){
