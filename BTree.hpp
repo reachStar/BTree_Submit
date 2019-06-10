@@ -753,7 +753,10 @@ namespace sjtu {
             writeonelujing(here);
             if(tmp.flagAndParent!=0){
                 elem father;
-                Read(father,tmp.flagAndParent*(-1));
+                if(tmp.flagAndParent<0)
+                    Read(father,tmp.flagAndParent*(-1));
+                else
+                    Read(father,tmp.flagAndParent);
                 if(father.oneSonPoint==here){
                     if(father.start==0){
                         father.start=-1;
